@@ -13,37 +13,9 @@
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
 
-            <li class="<?php
-            /*
-            ตรวจว่าขณะนี้ผู้ใช้อยู่ที่หน้าแรกหรือไม่
-            */
-            if ($PARENT_FILENAME === 'index.php') {
-              /*
-              ถ้าใช่ ก็ให้เพิ่ม class 'active' เข้าไปใน <li> นี้
-              เพื่อเน้นว่าในขณะนี้ ผู้ใช้อยู่ที่หน้านี้
-              */
-              #echo 'active';
-            }
-            ?>">
-              <a href="index.php">
-                <i class="fa fa-home" aria-hidden="true"></i>
-                หน้าแรก
-              </a>
-            </li>
+            <li><a href="./"><i class="fa fa-home" aria-hidden="true"></i>  หน้าแรก</a></li>
 
-            <li class="<?php
-                        /*
-                        ทำการตรวจสอบเมนูอื่นเช่นเดียวกัน
-                        */
-                        if ($PARENT_FILENAME === '?url=ex') {
-                          #echo 'active';
-                        }
-                        ?>">
-                          <a href="?url=ex">
-                            <i class="fa fa-calendar-o" aria-hidden="true"></i>
-                            ตัวอย่าง 
-                          </a>
-                        </li>
+            <li><a href="?url=ex"><i class="fa fa-calendar-o" aria-hidden="true"></i>  ตัวอย่าง </a></li>
                         
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
@@ -52,6 +24,9 @@
               <ul class="dropdown-menu">
                 <li><a href="?url=page1">ตัวอย่างที่ 1</a></li>
                 <li><a href="?url=page2">ตัวอย่างที่ 2</a></li>
+				<li><a href="?url=form_title">เพิ่มคำนำหน้าชื่อ</a></li>
+                <li><a href="?url=form_reg">สมัครสมาชิก</a></li>
+				<li><a href="?url=form_type">เพิ่มประเภทสินค้า</a></li>
               </ul>
             </li>
           </ul>

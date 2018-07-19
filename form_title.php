@@ -1,12 +1,10 @@
 <?php
 if(isset($_GET['add'])){ #แสดงค่าที่กด
-$q="SELECT * FROM {$prefix}_work WHERE id = '".$_GET['add']."'"; //
+$q="SELECT * FROM {$prefix}_title WHERE id = '".$_GET['add']."'"; //
 $reck = $mysqli->query($q); // ทำการ query คำสั่ง sql
 $rsc=$reck->fetch_object();
 @$id = $rsc->id;
 @$title = $rsc->title;
-@$description = $rsc->description;
-@$fname = $rsc->fname;
 }
 
 /*
@@ -19,11 +17,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   ตรวจสอบให้แน่ชัดว่ามีข้อมูลที่จำเป็นส่งมาครบหรือไม่ด้วย isset()
   ซึ่งจะเป็นจริงหากใน $_POST มี key ที่ต้องการครบ
   */
-  if (!isset($_POST['title'], $_POST['description'], $_POST['fname'])) {
+  if (!isset($_POST['title'])) {
     /*
-    หากไม่ครบก็ให้ redirect ไปที่ index.php?page1=page1&add=add
+    หากไม่ครบก็ให้ redirect ไปที่ index.php?page1=form_title&add=add
     */
-    header('Location: index.php?url=page1&add=add');
+    header('Location: index.php?url=form_title&add=add');
     exit;
   }
   /*
@@ -53,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     /*
     กำหนดค่าให้กับตัวแปร $FORM_ERRORS เพื่อนำไปใช้ใน inc/form_errors.inc.php ต่อไป
     */
-    $FORM_ERRORS['title'] = "กรุณาระบุ 'หัวข้อเรื่อง'";
+    $FORM_ERRORS['title'] = "กรุณาระบุ 'คำนำหน้าชื่อ'";
   }
   /*
   และตรวจสอบความยาวของ $DATA['title'] ว่ามีความยาวมากกว่าที่กำหนดหรือไม่
@@ -63,22 +61,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   อย่างภาษาไทย ทุกตัวอักษรจะมีขนาด 3 bytes
   */
   elseif (mb_strlen($DATA['title'], 'UTF-8') > 255) {
-    $FORM_ERRORS['title'] = "'หัวข้อเรื่อง' ต้องมีความยาวไม่เกิน 255 ตัวอักษร";
+    $FORM_ERRORS['title'] = "'คำนำหน้าชื่อ' ต้องมีความยาวไม่เกิน 255 ตัวอักษร";
   }
-  /*
-  ทำการตรวจสอบกับข้อมูลอื่นๆ เช่นเดียวกัน
-  */
-  if ($DATA['description'] === '') {
-    $FORM_ERRORS['description'] = "กรุณาระบุ 'รายละเอียด'";
-  } elseif (mb_strlen($DATA['description'], 'UTF-8') > 65535) {
-    $FORM_ERRORS['description'] = "'รายละเอียด' ต้องมีความยาวไม่เกิน 65535 ตัวอักษร";
-  }
-
-  if ($DATA['fname'] === '') {
-    $FORM_ERRORS['fname'] = "กรุณาระบุ 'ชื่อ-นามสกุล'";
-  } elseif (mb_strlen($DATA['fname'], 'UTF-8') > 64) {
-    $FORM_ERRORS['fname'] = "'ชื่อ-นามสกุล' ต้องมีความยาวไม่เกิน 64 ตัวอักษร";
-  }
+ 
   /*
   ถ้าไม่มีตัวแปร $FORM_ERRORS ถูกสร้างขึ้นมาจากการตรวจสอบข้างต้น แสดงว่าไม่มี error
   ข้อมูลทั้งหมดสามารถ INSERT เข้าฐานข้อมูลได้อย่างปลอดภัย
@@ -107,17 +92,13 @@ if($_GET['add']=="add"){ #แสดงค่าที่กด
       จะไม่สามารถทำแบบนี้ได้
       */
       "
-      INSERT INTO {$prefix}_work
+      INSERT INTO {$prefix}_title
       (
-        title,
-        description,
-        fname
+        title
       )
       VALUES
       (
-        '{$mysqli->escape_string($DATA['title'])}',
-        '{$mysqli->escape_string($DATA['description'])}',
-        '{$mysqli->escape_string($DATA['fname'])}'
+        '{$mysqli->escape_string($DATA['title'])}'        
       )
       "
     );
@@ -134,11 +115,9 @@ if($_GET['add']=="add"){ #แสดงค่าที่กด
     */
     $mysqli->query(
       "
-      UPDATE {$prefix}_work
+      UPDATE {$prefix}_title
       SET
-        title = '{$mysqli->escape_string($DATA['title'])}',
-        description = '{$mysqli->escape_string($DATA['description'])}',
-        fname = '{$mysqli->escape_string($DATA['fname'])}'
+        title = '{$mysqli->escape_string($DATA['title'])}'
       WHERE id = {$id}
       "
     );
@@ -170,9 +149,7 @@ if($_GET['add']=="add"){ #แสดงค่าที่กด
   โดยให้เป็นค่าว่างทั้งหมด
   */
   @$DATA = array(
-    'title' => $title,
-    'description' => $description,
-    'fname' => $fname,
+    'title' => $title
   );
 }
 $TAGS = array('PHP', 'JavaScript', 'SQL', 'HTML', 'CSS');
@@ -197,7 +174,7 @@ description เป็น textarea
 
 <?php echo pageex;?>
 
-<form action="?url=page1&add=<?=$_GET['add']?>" method="post" class="form-horizontal panel panel-default">
+<form action="?url=form_title&add=<?=$_GET['add']?>" method="post" class="form-horizontal panel panel-default">
   <div class="panel-heading">
     <h4>
       <span class="glyphicon glyphicon-pencil"></span>
@@ -221,7 +198,7 @@ description เป็น textarea
       echo 'has-error';
     }
     ?>">
-      <label for="titleInput" class="col-sm-4 control-label">*หัวข้อเรื่อง</label>
+      <label for="titleInput" class="col-sm-4 control-label">*คำนำหน้าชื่อ</label>
       <div class="col-sm-4">
         <input
           type="text"
@@ -230,67 +207,33 @@ description เป็น textarea
           value="<?php
           echo htmlspecialchars($DATA['title'], ENT_QUOTES, 'UTF-8');
           ?>"
-          placeholder="หัวข้อเรื่อง"
+          placeholder="คำนำหน้าชื่อ"
           spellcheck="false"
           class="form-control"
         >
       </div>
     </div>
-    <div class="form-group <?php
-    /*
-    ถ้ามี key ชื่อ 'description' อยู่ใน array $FORM_ERRORS
-    ให้เพิ่ม class 'has-error' เข้าไปใน <div> นี้
-    */
-    if (isset($FORM_ERRORS['description'])) {
-      echo 'has-error';
-    }
-    ?>">
-      <label for="descriptionInput" class="col-sm-4 control-label">*ฃรายละเอียด</label>
-      <div class="col-sm-4">
-        <textarea
-             id="description"
-             name="description"
-             rows="5"
-             placeholder="รายละเอียด"
-             spellcheck="false"
-             class="form-control"
-           ><?php
-           echo htmlspecialchars($DATA['description'], ENT_QUOTES, 'UTF-8');
-           ?></textarea>
-      </div>
-    </div>
-    <div class="form-group <?php
-    /*
-    ถ้ามี key ชื่อ 'fname' อยู่ใน array $FORM_ERRORS
-    ให้เพิ่ม class 'has-error' เข้าไปใน <div> นี้
-    */
-    if (isset($FORM_ERRORS['fname'])) {
-      echo 'has-error';
-    }
-    ?>">
-      <label for="nameInput" class="col-sm-4 control-label">*ชื่อ-นามสกุล</label>
-      <div class="col-sm-4">
-        <input
-          type="text"
-          id="fnameInput"
-          name="fname"
-          value="<?php
-          echo htmlspecialchars($DATA['fname'], ENT_QUOTES, 'UTF-8');
-          ?>"
-          placeholder="ชื่อ-นามสกุล"
-          spellcheck="false"
-          class="form-control"
-        >
-      </div>
-    </div>
-    <hr>
-    <div class="form-group">
-      <div class="col-sm-4 col-sm-offset-4">
-        <button type="submit" class="btn btn-primary btn-block">
-          ตั้งกระทู้
+       <hr>
+	         <div class="form-group">
+        <div class="col-sm-2 col-sm-offset-4">
+           <button type="submit" class="btn btn-primary btn-block">
+		<?php if($_GET['add']=="add"){ #แสดงค่าที่กด?>
+			เพิ่มคำนำหน้าชื่อ
+		<?php }else{?>
+			ทำการแก้ไข
+		  <?php }?>
         </button>
+
+        </div>
+        <div class="col-sm-2">
+          <a class="btn btn-primary btn-block" href="?url=form_title">
+            ยกเลิกการลบ
+          </a>
+        </div>
       </div>
-    </div>
+	  
+    <div class="form-group">
+
   </div>
 </form>
 <?php
@@ -299,17 +242,15 @@ description เป็น textarea
 
 <?php }else if(isset($_GET['del'])){ ?>
   <?php
-  $q="SELECT * FROM {$prefix}_work WHERE id = '".$_GET['del']."'"; //
+  $q="SELECT * FROM {$prefix}_title WHERE id = '".$_GET['del']."'"; //
   $reck = $mysqli->query($q); // ทำการ query คำสั่ง sql
   $rsc=$reck->fetch_object();
   #print_r($rsc);
   @$DATA['id'] = $rsc->id;
   @$DATA['title'] = $rsc->title;
-  @$DATA['description'] = $rsc->description;
-  @$DATA['fname'] = $rsc->fname;
 
   if(isset($_GET['delete'])){ #แสดงค่าที่กด
-      $mysqli->query("DELETE FROM {$prefix}_work
+      $mysqli->query("DELETE FROM {$prefix}_title
   			WHERE id = {$_GET['delete']}
         "
       );
@@ -346,7 +287,7 @@ description เป็น textarea
         echo 'has-error';
       }
       ?>">
-        <label for="titleInput" class="col-sm-4 control-label">*หัวข้อเรื่อง</label>
+        <label for="titleInput" class="col-sm-4 control-label">*คำนำหน้าชื่อ</label>
         <div class="col-sm-4">
           <input
             type="text"
@@ -355,70 +296,22 @@ description เป็น textarea
             value="<?php
             echo htmlspecialchars($DATA['title'], ENT_QUOTES, 'UTF-8');
             ?>"
-            placeholder="หัวข้อเรื่อง"
+            placeholder="คำนำหน้าชื่อ"
             spellcheck="false"
             class="form-control"
             disabled
           >
         </div>
       </div>
-      <div class="form-group <?php
-      /*
-      ถ้ามี key ชื่อ 'description' อยู่ใน array $FORM_ERRORS
-      ให้เพิ่ม class 'has-error' เข้าไปใน <div> นี้
-      */
-      if (isset($FORM_ERRORS['description'])) {
-        echo 'has-error';
-      }
-      ?>">
-        <label for="descriptionInput" class="col-sm-4 control-label">*ฃรายละเอียด</label>
-        <div class="col-sm-4">
-          <textarea
-               id="description"
-               name="description"
-               rows="5"
-               placeholder="รายละเอียด"
-               spellcheck="false"
-               class="form-control"
-               disabled
-             ><?php
-             echo htmlspecialchars($DATA['description'], ENT_QUOTES, 'UTF-8');
-             ?></textarea>
-        </div>
-      </div>
-      <div class="form-group <?php
-      /*
-      ถ้ามี key ชื่อ 'fname' อยู่ใน array $FORM_ERRORS
-      ให้เพิ่ม class 'has-error' เข้าไปใน <div> นี้
-      */
-      if (isset($FORM_ERRORS['fname'])) {
-        echo 'has-error';
-      }
-      ?>">
-        <label for="nameInput" class="col-sm-4 control-label">*ชื่อ-นามสกุล</label>
-        <div class="col-sm-4">
-          <input
-            type="text"
-            id="fnameInput"
-            name="fname"
-            value="<?php
-            echo htmlspecialchars($DATA['fname'], ENT_QUOTES, 'UTF-8');
-            ?>"
-            placeholder="ชื่อ-นามสกุล"
-            spellcheck="false"
-            class="form-control"
-            disabled
-          >
-        </div>
-      </div>
+
       <hr>
       <div class="form-group">
         <div class="col-sm-2 col-sm-offset-4">
-          <a class="btn btn-primary btn-block" href="?url=page1&del=<?php echo $DATA['id'];?>&delete=<?php echo $DATA['id'];?>">ทำการลบ</a>
+          <a class="btn btn-primary btn-block" href="?url=form_title&del=<?php echo $DATA['id'];?>&delete=<?php echo $DATA['id'];?>">ทำการลบ</a>
 
         </div>
         <div class="col-sm-2">
-          <a class="btn btn-primary btn-block" href="?url=page1">
+          <a class="btn btn-primary btn-block" href="?url=form_title">
             ยกเลิกการลบ
           </a>
         </div>
@@ -429,7 +322,7 @@ description เป็น textarea
 
 <?php
 $i=1;
-$q="SELECT * FROM {$prefix}_work ORDER BY id DESC"; //
+$q="SELECT * FROM {$prefix}_title ORDER BY id DESC"; //
 $result = $mysqli->query($q); // ทำการ query คำสั่ง sql
 $total=$result->num_rows;  // นับจำนวนถวที่แสดง ทั้งหมด
 ?>
@@ -439,7 +332,7 @@ $total=$result->num_rows;  // นับจำนวนถวที่แสด�
                 <br />
                 <div class="table-responsive">
                      <div align="right">
-                       <a class="btn btn-info btn-xs add_data" href="?url=page1&add=add">เพิ่ม</a>
+                       <a class="btn btn-info btn-xs add_data" href="?url=form_title&add=add">เพิ่ม</a>
 
                      </div>
                      <br />
@@ -448,9 +341,7 @@ $total=$result->num_rows;  // นับจำนวนถวที่แสด�
         <thead>
             <tr>
                 <th>#</th>
-                <th>หัวข้อ</th>
-                <th>รายละเอียด</th>
-                <th>ผู้เขียน</th>
+                <th>คำนำหน้าชื่อ</th>
                 <th>แสดง</th>
             </tr>
         </thead>
@@ -459,11 +350,9 @@ $total=$result->num_rows;  // นับจำนวนถวที่แสด�
             <tr>
 			<td><?php echo $n++; ?></td>
                 <td><?php echo $rs->title; ?></td>
-                <td><?php echo $rs->description; ?></td>
-                <td><?php echo $rs->fname; ?></td>
                 <td>
-        <a class="btn btn-info btn-xs edit_data" href="?url=page1&add=<?php echo $rs->id; ?>">แก้ไข</a>
-        <a class="btn btn-info btn-xs del_data" href="?url=page1&del=<?php echo $rs->id; ?>">ลบ</a>
+        <a class="btn btn-info btn-xs edit_data" href="?url=form_title&add=<?php echo $rs->id; ?>">แก้ไข</a>
+        <a class="btn btn-info btn-xs del_data" href="?url=form_title&del=<?php echo $rs->id; ?>">ลบ</a>
 
 				</td>
             </tr>
@@ -472,9 +361,7 @@ $total=$result->num_rows;  // นับจำนวนถวที่แสด�
         <tfoot>
             <tr>
                 <th>#</th>
-                <th>หัวข้อ</th>
-                <th>รายละเอียด</th>
-                <th>ผู้เขียน</th>
+                <th>คำนำหน้าชื่อ</th>
                 <th>แสดง</th>
             </tr>
         </tfoot>

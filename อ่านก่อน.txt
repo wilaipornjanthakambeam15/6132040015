@@ -1,3 +1,8 @@
 https://fontawesome.com/v4.7.0/icons/
 
 <i class="fa fa-calendar-o" aria-hidden="true"></i>
+
+ติดตั้งโปรแกรม
+1. https://git-scm.com/ 
+2. https://github.com/
+3. GitHub Desktop

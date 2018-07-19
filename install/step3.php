@@ -54,14 +54,14 @@ if (defined('ROOT_PATH')) {
       }
     }
     if (!$error) {
-      // บันทึก inc/database.php
+      // บันทึก database/database.php
       $database_cfg = include('settings/database.php');
       $database_cfg['mysqli']['username'] = $_SESSION['db_username'];
       $database_cfg['mysqli']['password'] = $_SESSION['db_password'];
       $database_cfg['mysqli']['dbname'] = $_SESSION['db_name'];
       $database_cfg['mysqli']['hostname'] = $_SESSION['db_server'];
       $database_cfg['mysqli']['prefix'] = $_SESSION['prefix'];
-      $f = save($database_cfg, ROOT_PATH.'inc/database.php');
+      $f = save($database_cfg, ROOT_PATH.'database/database.php');
       $content[] = '<li class="'.($f ? 'correct' : 'incorrect').'">สร้างไฟล์ตั้งค่า <b>database.php</b> ...</li>';
       // บันทึก settings/config.php
       #$cfg = include('settings/config.php');

@@ -5,7 +5,7 @@ if (defined('ROOT_PATH')) {
   echo '<ul>';
   $folders = array();
   #$folders[] = ROOT_PATH.'datas/';
-  $folders[] = ROOT_PATH.'inc/';
+  $folders[] = ROOT_PATH.'database/';
   #$folders[] = ROOT_PATH.'datas/cache/';
   #$folders[] = ROOT_PATH.'datas/logs/';
   foreach ($folders AS $folder) {
@@ -19,7 +19,7 @@ if (defined('ROOT_PATH')) {
   }
   $files = array();
   #$files[] = ROOT_PATH."settings/config.php";
-  $files[] = ROOT_PATH."inc/database.php";
+  $files[] = ROOT_PATH."database/database.php";
   foreach ($files AS $file) {
     if (!is_file($file)) {
       $f = @fopen($file, 'wb');
